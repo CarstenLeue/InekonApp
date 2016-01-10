@@ -2,6 +2,7 @@ package com.inekon.app;
 
 import java.io.Closeable;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +16,13 @@ import com.sun.jna.platform.win32.COM.util.office.excel.ComIApplication;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComIWorkbook;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComIWorksheet;
 
-public class ApplicationBean implements Closeable {
+/**
+ * Representation of all data operations on one excel sheet
+ * 
+ * @author cleue
+ *
+ */
+public class ExcelBean implements Closeable {
 
 	/**
 	 * Matches an Excel cell pattern
@@ -23,7 +30,7 @@ public class ApplicationBean implements Closeable {
 	private static final Pattern CELL_PATTERN = Pattern.compile("[A-Z]+[1-9][0-9]*");
 
 	/** class name for the logger */
-	private static final String LOG_CLASS = ApplicationBean.class.getName();
+	private static final String LOG_CLASS = ExcelBean.class.getName();
 
 	/** logging level */
 	private static final Level LOG_LEVEL = Level.FINER;
@@ -62,7 +69,7 @@ public class ApplicationBean implements Closeable {
 
 	private ComIWorkbook openWorkbook;
 
-	public ApplicationBean() {
+	public ExcelBean() {
 	}
 
 	public void close() {
@@ -127,6 +134,43 @@ public class ApplicationBean implements Closeable {
 		}
 		// ok
 		return bResult;
+	}
+
+	/**
+	 * Retrieves the final data set
+	 * 
+	 * @param aCells
+	 *            the cells
+	 */
+	public Map<String, String> getData(final Iterable<String> aCells) {
+		// logging support
+		final String LOG_METHOD = "getData(aCells)";
+		if (bIsLogging) {
+			LOGGER.entering(LOG_CLASS, LOG_METHOD, aCells);
+		}
+		// access the current worksheet
+		final ComIWorksheet sheet = getExcel().getActiveSheet();
+		// the result
+		final Map<String, String> result = new HashMap<String, String>();
+		for (String cellName : aCells) {
+			// validate the input
+			if (isCellName(cellName)) {
+				// set the value
+				result.put(cellName, sheet.getRange(cellName).getText());
+			} else {
+				// log this
+				if (bIsLogging) {
+					LOGGER.logp(LOG_LEVEL, LOG_CLASS, LOG_METHOD,
+							"The name [{0}] is not a valid cell name in Excel ...", cellName);
+				}
+			}
+		}
+		// exit trace
+		if (bIsLogging) {
+			LOGGER.exiting(LOG_CLASS, LOG_METHOD, result);
+		}
+		// ok
+		return result;
 	}
 
 	private final ComIApplication getExcel() {
