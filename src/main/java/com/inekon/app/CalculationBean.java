@@ -15,15 +15,15 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CalculationBean {
 
-	private final ShoppingCartBean cart;
+	public static final String KEY_LEFT = "l";
 
-	public CalculationBean(final ShoppingCartBean aCart) {
-		cart = aCart;
-	}
+	public static final String KEY_RIGHT = "r";
 
 	/** class name for the logger */
 	private static final String LOG_CLASS = CalculationBean.class.getName();
@@ -36,88 +36,10 @@ public class CalculationBean {
 
 	private final boolean bIsLogging = LOGGER.isLoggable(LOG_LEVEL);
 
-	private final Map<String, Double> getResultFromExcelOutput(final Map<String, String> aData) {
-		// logging support
-		final String LOG_METHOD = "getResultFromExcelOutput(aData)";
-		if (bIsLogging) {
-			LOGGER.entering(LOG_CLASS, LOG_METHOD, aData);
-		}
-		// excel map
-		final Map<String, Double> result = new HashMap<String, Double>();
-		result.put("result", Double.parseDouble(aData.get("B4")));
-		// exit trace
-		if (bIsLogging) {
-			LOGGER.exiting(LOG_CLASS, LOG_METHOD, result);
-		}
-		// ok
-		return result;
-	}
+	private final ShoppingCartBean cart;
 
-	private final Map<String, String> getExcelInputFromParameters(final Map<String, String> aData) {
-		// logging support
-		final String LOG_METHOD = "getExcelInputFromParameters(aData)";
-		if (bIsLogging) {
-			LOGGER.entering(LOG_CLASS, LOG_METHOD, aData);
-		}
-		// excel map
-		final Map<String, String> result = new HashMap<String, String>();
-		// add
-		result.put("B1", aData.get("left"));
-		result.put("B2", aData.get("right"));
-		// exit trace
-		if (bIsLogging) {
-			LOGGER.exiting(LOG_CLASS, LOG_METHOD, result);
-		}
-		// ok
-		return result;
-	}
-
-	private final Iterable<String> getExcelOutput() {
-		final List<String> result = new ArrayList<String>();
-		result.add("B4");
-		// ok
-		return result;
-	}
-
-	private final JSONObject resultToJson(final Map<String, Double> aResult) {
-		// logging support
-		final String LOG_METHOD = "resultToJson(aResult)";
-		if (bIsLogging) {
-			LOGGER.entering(LOG_CLASS, LOG_METHOD, aResult);
-		}
-		// construct the object
-		final JSONObject obj = new JSONObject();
-		for (Map.Entry<String, Double> e : aResult.entrySet()) {
-			obj.put(e.getKey(), e.getValue());
-		}
-		// exit trace
-		if (bIsLogging) {
-			LOGGER.exiting(LOG_CLASS, LOG_METHOD);
-		}
-		// ok
-		return obj;
-	}
-
-	private final void writeJson(final File aDstFile, final JSONObject aObject) throws IOException {
-		// logging support
-		final String LOG_METHOD = "writeJson(aDstFile, aObject)";
-		if (bIsLogging) {
-			LOGGER.entering(LOG_CLASS, LOG_METHOD, new Object[] { aDstFile, aObject });
-		}
-		// construct the stream
-		final Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(aDstFile), JSON_CHARTSET));
-		try {
-			// write
-			aObject.write(out);
-		} finally {
-			// done
-			out.close();
-		}
-		// exit trace
-		if (bIsLogging) {
-			LOGGER.exiting(LOG_CLASS, LOG_METHOD);
-		}
-
+	public CalculationBean(final ShoppingCartBean aCart) {
+		cart = aCart;
 	}
 
 	public ShoppingCartBean.VersionBean doCalculation(final Map<String, String> aData) throws IOException {
@@ -137,8 +59,7 @@ public class CalculationBean {
 				// set the data
 				excel.setData(getExcelInputFromParameters(aData));
 				// write
-				writeJson(version.getResultFile(),
-						resultToJson(getResultFromExcelOutput(excel.getData(getExcelOutput()))));
+				writeJson(version.getResultFile(), getResultFromExcelOutput(excel.getData(getExcelOutput())));
 			}
 		} finally {
 			// shutdown
@@ -150,5 +71,86 @@ public class CalculationBean {
 		}
 		// ok
 		return version;
+	}
+
+	private final Map<String, String> getExcelInputFromParameters(final Map<String, String> aData) {
+		// logging support
+		final String LOG_METHOD = "getExcelInputFromParameters(aData)";
+		if (bIsLogging) {
+			LOGGER.entering(LOG_CLASS, LOG_METHOD, aData);
+		}
+		// excel map
+		final Map<String, String> result = new HashMap<String, String>();
+		// add
+		result.put("B1", aData.get(KEY_LEFT));
+		result.put("B2", aData.get(KEY_RIGHT));
+		// exit trace
+		if (bIsLogging) {
+			LOGGER.exiting(LOG_CLASS, LOG_METHOD, result);
+		}
+		// ok
+		return result;
+	}
+
+	private final Iterable<String> getExcelOutput() {
+		final List<String> result = new ArrayList<String>();
+		result.add("B4");
+		// ok
+		return result;
+	}
+
+	private final Map<String, Double> getResultFromExcelOutput(final Map<String, String> aData) {
+		// logging support
+		final String LOG_METHOD = "getResultFromExcelOutput(aData)";
+		if (bIsLogging) {
+			LOGGER.entering(LOG_CLASS, LOG_METHOD, aData);
+		}
+		// excel map
+		final Map<String, Double> result = new HashMap<String, Double>();
+		result.put("result", Double.parseDouble(aData.get("B4")));
+		// exit trace
+		if (bIsLogging) {
+			LOGGER.exiting(LOG_CLASS, LOG_METHOD, result);
+		}
+		// ok
+		return result;
+	}
+
+	private final void writeJson(final File aDstFile, final Map<String, Double> aResult) throws IOException {
+		// logging support
+		final String LOG_METHOD = "writeJson(aDstFile, aObject)";
+		if (bIsLogging) {
+			LOGGER.entering(LOG_CLASS, LOG_METHOD, new Object[] { aDstFile, aResult });
+		}
+		// construct the stream
+		final Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(aDstFile), JSON_CHARTSET));
+		try {
+			// write
+			writeJson(out, aResult);
+		} finally {
+			// done
+			out.close();
+		}
+		// exit trace
+		if (bIsLogging) {
+			LOGGER.exiting(LOG_CLASS, LOG_METHOD);
+		}
+
+	}
+
+	private final void writeJson(final Writer aOut, final Map<String, Double> aResult)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		// logging support
+		final String LOG_METHOD = "writeJson(aResult)";
+		if (bIsLogging) {
+			LOGGER.entering(LOG_CLASS, LOG_METHOD, aResult);
+		}
+		// map
+		final ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(aOut, aResult);
+		// exit trace
+		if (bIsLogging) {
+			LOGGER.exiting(LOG_CLASS, LOG_METHOD);
+		}
 	}
 }

@@ -21,7 +21,7 @@ import com.inekon.app.helper.DeleteAll;
 public class ShoppingCartBean implements Comparable<ShoppingCartBean> {
 
 	public static final Charset JSON_CHARTSET = Charset.forName("UTF-8");
-	
+
 	public class VersionBean implements Comparable<VersionBean> {
 
 		private File excelFile;
@@ -32,6 +32,15 @@ public class ShoppingCartBean implements Comparable<ShoppingCartBean> {
 
 		private VersionBean(final File aFolder) {
 			folder = aFolder;
+		}
+
+		/**
+		 * Returns the parent object
+		 * 
+		 * @return the parent
+		 */
+		public ShoppingCartBean getParent() {
+			return ShoppingCartBean.this;
 		}
 
 		/*
