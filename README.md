@@ -4,11 +4,14 @@ by dispatching this computation to an Excel sheet. This can be extended with a c
 Excel application, serviced via REST.
 
 # Setup
+- install Microsoft Excel
 - install Maven (https://maven.apache.org/download.cgi)
-- clone the repository
-- mvn spring-boot:run
+- clone the repository ```git clone https://github.com/CarstenLeue/InekonApp.git```
+- switch into the directory ```cd InekonApp``` 
+- compile and run ```mvn spring-boot:run```
 
 # Test
-The server is available under 
+The server is available under
+ 
 http://localhost:8080/calc
 
