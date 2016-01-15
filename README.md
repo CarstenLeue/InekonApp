@@ -14,4 +14,3 @@ Excel application, serviced via REST.
 The server is available under
  
 http://localhost:8080/calc
-
