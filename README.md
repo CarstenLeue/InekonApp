@@ -5,10 +5,11 @@ Excel application, serviced via REST.
 
 # Setup
 - install Maven (https://maven.apache.org/download.cgi)
-- clone the repository
-- mvn spring-boot:run
+- clone the repository ```git clone https://github.com/CarstenLeue/InekonApp.git```
+- compile and run ```mvn spring-boot:run```
 
 # Test
-The server is available under 
+The server is available under
+ 
 http://localhost:8080/calc
 

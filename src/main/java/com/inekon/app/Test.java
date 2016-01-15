@@ -14,7 +14,7 @@ import com.sun.jna.platform.win32.COM.util.office.excel.ComIWorksheet;
 
 public class Test {
 
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static void _main(String[] args) throws InterruptedException, IOException {
 
 		final Map<String, String> input = new HashMap<String, String>();
 		input.put("left", "10");
