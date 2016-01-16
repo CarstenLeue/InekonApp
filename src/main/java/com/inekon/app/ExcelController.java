@@ -2,6 +2,7 @@ package com.inekon.app;
 
 import static com.inekon.app.CalculationBean.KEY_LEFT;
 import static com.inekon.app.CalculationBean.KEY_RIGHT;
+import static com.inekon.app.CalculationBean.KEY_TARGET;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +14,12 @@ import java.util.logging.Logger;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inekon.app.ShoppingCartBean.VersionBean;
 
 @RestController
@@ -36,15 +41,6 @@ public class ExcelController {
 	private static final File TEMPLATE_FILE = new File("dirk.xls");
 
 	/**
-	 * The initial entry point into our computations
-	 * 
-	 * @return the cart
-	 */
-	private final ShoppingCartListBean getShoppingCartListBean() {
-		return new ShoppingCartListBean(TEMPLATE_FILE);
-	}
-
-	/**
 	 * Constructs a new cart
 	 * 
 	 * @param aTitle
@@ -60,11 +56,6 @@ public class ExcelController {
 		bean.saveProperties();
 		// returns the new cart
 		return new ShoppingCartRefBean(bean);
-	}
-
-	@RequestMapping("/shoppingCarts")
-	public ShoppingCartListResultBean getShoppingCarts() {
-		return new ShoppingCartListResultBean(getShoppingCartListBean());
 	}
 
 	@RequestMapping(value = { "/calc" }, method = { RequestMethod.POST })
@@ -109,5 +100,35 @@ public class ExcelController {
 		}
 		// the data
 		return result;
+	}
+
+	@RequestMapping("/result")
+	public Map<?, ?> getResult(@RequestParam(value = "cartId") String aCartId,
+			@RequestParam(value = "versionId") String aVersionId)
+					throws JsonParseException, JsonMappingException, IOException {
+
+		// the list
+		final ShoppingCartListBean list = getShoppingCartListBean();
+		final ShoppingCartBean cartBean = list.getShoppingCartBean(aCartId);
+		final VersionBean versionBean = cartBean.getVersionBean(aVersionId);
+
+		// extract the result
+		final File resultFile = versionBean.getResultFile();
+		final ObjectMapper mapper = new ObjectMapper();
+		return mapper.readValue(resultFile, Map.class);
+	}
+
+	/**
+	 * The initial entry point into our computations
+	 * 
+	 * @return the cart
+	 */
+	private final ShoppingCartListBean getShoppingCartListBean() {
+		return new ShoppingCartListBean(TEMPLATE_FILE);
+	}
+
+	@RequestMapping("/shoppingCarts")
+	public ShoppingCartListResultBean getShoppingCarts() {
+		return new ShoppingCartListResultBean(getShoppingCartListBean());
 	}
 }

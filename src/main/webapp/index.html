@@ -327,7 +327,19 @@
 							<p>
 
 								<!-- shows the content of a cart -->
-							<div class="panel panel-default" ng-show="cartId">
+							<div class="panel panel-default" ng-show="versionId">
+								<!-- Default panel contents -->
+								<div class="panel-heading">Resultat</div>
+								Resultat
+								<div class="panel-body">
+									<button class="btn btn-default" type="button"
+										ng-click="onSelectShoppingCart(cartId)">Zurück</button>
+
+								</div>
+							</div>
+
+							<!-- shows the content of a cart -->
+							<div class="panel panel-default" ng-show="cartId && !versionId">
 								<!-- Default panel contents -->
 								<div class="panel-heading">Inhalt eines Projekts</div>
 								<div class="panel-body">
@@ -347,7 +359,8 @@
 										<button class="btn btn-primary" type="submit">Berechnen
 											...</button>
 
-										<button class="btn btn-default" type="button" ng-click="onSelectShoppingCartList()">Zurück</button>
+										<button class="btn btn-default" type="button"
+											ng-click="onSelectShoppingCartList()">Zurück</button>
 									</form>
 									</p>
 
@@ -689,6 +702,8 @@
 	<script
 		src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
 	<script src="js/InekonController.js"></script>
+
+	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
 </body>
 

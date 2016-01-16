@@ -38,7 +38,7 @@ angular.module('InekonApp.controllers', []).controller(
 				// dispatch to the REST service
 				inekonApi.createShoppingCart($scope.shoppingCartTitle).then(
 						function(result) {
-							console.log(result);
+							$scope.cartId = result.data.id;
 						});
 			}
 
@@ -50,6 +50,7 @@ angular.module('InekonApp.controllers', []).controller(
 				console.log("select", aId);
 				// select
 				$scope.cartId = aId;
+				delete $scope.versionId;
 			}
 
 			$scope.onSelectVersion = function(aId) {
@@ -68,7 +69,11 @@ angular.module('InekonApp.controllers', []).controller(
 			$scope.onCalculate = function() {
 				console.log("calc", $scope.cartId, $scope.left, $scope.right);
 
-				inekonApi.calculate($scope.cartId, $scope.left, $scope.right);
+				inekonApi.calculate($scope.cartId, $scope.left, $scope.right).then(function(result) {
+					var data = result.data;
+					$scope.versionId = data.versionId;
+					$scope.cartId = data.cartId;
+				});
 			}
 
 			$scope.onSelectShoppingCartList = function() {

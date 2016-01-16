@@ -23,6 +23,8 @@ public class CalculationBean {
 
 	public static final String KEY_LEFT = "l";
 
+	public static final String KEY_TARGET = "t";
+
 	public static final String KEY_RIGHT = "r";
 
 	/** class name for the logger */
@@ -56,6 +58,8 @@ public class CalculationBean {
 		try {
 			// check if we have a valid file
 			if (excel.openFile(version.getExcelFile())) {
+				// update
+				aData.put(KEY_TARGET, version.getFolder().getAbsolutePath());
 				// set the data
 				excel.setData(getExcelInputFromParameters(aData));
 				// write
@@ -84,6 +88,8 @@ public class CalculationBean {
 		// add
 		result.put("B1", aData.get(KEY_LEFT));
 		result.put("B2", aData.get(KEY_RIGHT));
+
+		result.put("K2", aData.get(KEY_TARGET));
 		// exit trace
 		if (bIsLogging) {
 			LOGGER.exiting(LOG_CLASS, LOG_METHOD, result);
@@ -94,20 +100,29 @@ public class CalculationBean {
 
 	private final Iterable<String> getExcelOutput() {
 		final List<String> result = new ArrayList<String>();
-		result.add("B4");
+		for (int i = 0; i < 20; ++i) {
+			result.add("B" + (7 + i));
+		}
 		// ok
 		return result;
 	}
 
-	private final Map<String, Double> getResultFromExcelOutput(final Map<String, String> aData) {
+	private final Map<String, Double[]> getResultFromExcelOutput(final Map<String, String> aData) {
 		// logging support
 		final String LOG_METHOD = "getResultFromExcelOutput(aData)";
 		if (bIsLogging) {
 			LOGGER.entering(LOG_CLASS, LOG_METHOD, aData);
 		}
 		// excel map
-		final Map<String, Double> result = new HashMap<String, Double>();
-		result.put("result", Double.parseDouble(aData.get("B4")));
+		final Map<String, Double[]> result = new HashMap<String, Double[]>();
+		final Double[] rows = new Double[20];
+		for (int row = 0; row < 20; row++) {
+
+			final String data = aData.get("B" + (7 + row));
+
+			rows[row] = Double.parseDouble(data.replace(',', '.'));
+		}
+		result.put("result", rows);
 		// exit trace
 		if (bIsLogging) {
 			LOGGER.exiting(LOG_CLASS, LOG_METHOD, result);
@@ -116,7 +131,7 @@ public class CalculationBean {
 		return result;
 	}
 
-	private final void writeJson(final File aDstFile, final Map<String, Double> aResult) throws IOException {
+	private final void writeJson(final File aDstFile, final Map<String, Double[]> aResult) throws IOException {
 		// logging support
 		final String LOG_METHOD = "writeJson(aDstFile, aObject)";
 		if (bIsLogging) {
@@ -138,7 +153,7 @@ public class CalculationBean {
 
 	}
 
-	private final void writeJson(final Writer aOut, final Map<String, Double> aResult)
+	private final void writeJson(final Writer aOut, final Map<String, Double[]> aResult)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		// logging support
 		final String LOG_METHOD = "writeJson(aResult)";

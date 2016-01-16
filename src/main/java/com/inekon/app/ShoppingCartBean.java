@@ -33,6 +33,10 @@ public class ShoppingCartBean implements Comparable<ShoppingCartBean> {
 		private VersionBean(final File aFolder) {
 			folder = aFolder;
 		}
+		
+		public File getFolder() {
+			return folder;
+		}
 
 		/**
 		 * Returns the parent object
@@ -283,6 +287,10 @@ public class ShoppingCartBean implements Comparable<ShoppingCartBean> {
 		}
 		// ok
 		return title;
+	}
+	
+	public final VersionBean getVersionBean(final String aVersionId) {
+		return new VersionBean(new File(rootFolder, aVersionId));
 	}
 
 	public final List<VersionBean> getVersions() {
