@@ -77,6 +77,24 @@ public class ShoppingCartListBean {
 		return bean;
 	}
 
+	public ShoppingCartBean getShoppingCartBean(final String aId) {
+		// logging support
+		final String LOG_METHOD = "getShoppingCartBean(aId)";
+		final boolean bIsLogging = LOGGER.isLoggable(LOG_LEVEL);
+		if (bIsLogging) {
+			LOGGER.entering(LOG_CLASS, LOG_METHOD, aId);
+		}
+		// the folder
+		final File cartFolder = new File(rootFolder, aId);
+		final ShoppingCartBean result = new ShoppingCartBean(cartFolder);
+		// exit trace
+		if (bIsLogging) {
+			LOGGER.exiting(LOG_CLASS, LOG_METHOD, result);
+		}
+		// ok
+		return result;
+	}
+
 	public List<ShoppingCartBean> getShoppingCarts() {
 		// logging support
 		final String LOG_METHOD = "getShoppingCarts()";

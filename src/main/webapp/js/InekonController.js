@@ -10,6 +10,14 @@ angular.module('InekonApp.services', []).factory('inekonApi', function($http) {
 		return $http.put("/createShoppingCart", aTitle);
 	}
 
+	api.calculate = function(aId, aLeft, aRight) {
+		return $http.post("/calc", {
+			"id" : aId,
+			"left" : aLeft,
+			"right" : aRight
+		});
+	}
+
 	return api;
 });
 
@@ -58,7 +66,9 @@ angular.module('InekonApp.controllers', []).controller(
 			}
 
 			$scope.onCalculate = function() {
-				console.log("calc", $scope.left, $scope.right);
+				console.log("calc", $scope.cartId, $scope.left, $scope.right);
+
+				inekonApi.calculate($scope.cartId, $scope.left, $scope.right);
 			}
 
 			$scope.onSelectShoppingCartList = function() {

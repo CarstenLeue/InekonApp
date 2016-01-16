@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inekon.app.ShoppingCartBean.VersionBean;
@@ -68,21 +67,22 @@ public class ExcelController {
 		return new ShoppingCartListResultBean(getShoppingCartListBean());
 	}
 
-	@RequestMapping("/calc")
-	public CalculationResult doCalculation(@RequestParam(value = "left", defaultValue = "1") int aLeft,
-			@RequestParam(value = "right", defaultValue = "2") int aRight) throws IOException {
+	@RequestMapping(value = { "/calc" }, method = { RequestMethod.POST })
+	public CalculationResult doCalculation(@RequestBody Map<String, String> aInput) throws IOException {
 		// logging support
 		final String LOG_METHOD = "doCalculation()";
 		final boolean bIsLogging = LOGGER.isLoggable(LOG_LEVEL);
 		if (bIsLogging) {
 			LOGGER.entering(LOG_CLASS, LOG_METHOD);
 		}
+		// cart ID
+		final String cartId = aInput.get("id");
 		/**
 		 * Conceptually we perform each computation as part of a "shopping cart"
 		 * . This cart has an ID and customers could be charged for it.
 		 */
 		final ShoppingCartListBean list = getShoppingCartListBean();
-		final ShoppingCartBean cart = list.createNewShoppingCart();
+		final ShoppingCartBean cart = list.getShoppingCartBean(cartId);
 		/**
 		 * This is the bean that executes the actual calculation
 		 */
@@ -93,8 +93,8 @@ public class ExcelController {
 		 * is not identical to the input to the bean
 		 */
 		final Map<String, String> input = new HashMap<String, String>();
-		input.put(KEY_LEFT, Integer.toString(aLeft));
-		input.put(KEY_RIGHT, Integer.toString(aRight));
+		input.put(KEY_LEFT, aInput.get("left"));
+		input.put(KEY_RIGHT, aInput.get("right"));
 		/**
 		 * The result of the calculation is a new version bean, represented by a
 		 * new folder inside the shopping cart structure. That way, each
