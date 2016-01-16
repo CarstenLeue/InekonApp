@@ -34,7 +34,8 @@
 
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index" ng-app="InekonApp"
+	ng-controller="InekonController">
 
 	<!-- Navigation -->
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -324,12 +325,104 @@
 							<img src="img/portfolio/demo.png"
 								class="img-responsive img-centered" alt="">
 							<p>
-								Use this area of the page to describe your project. The icon
-								above is part of a free icon set by <a
-									href="https://sellfy.com/p/8Q9P/jV3VZ/">Flat Icons</a>. On
-								their website, you can download their free set with 16 icons, or
-								you can purchase the entire set with 146 icons for only $12!
+
+								<!-- shows the content of a cart -->
+							<div class="panel panel-default" ng-show="cartId">
+								<!-- Default panel contents -->
+								<div class="panel-heading">Inhalt eines Projekts</div>
+								<div class="panel-body">
+									<p>
+									<form ng-submit="onCalculate()">
+										<div class="input-group">
+											<span class="input-group-addon" id="sum1">Summand</span> <input
+												type="number" class="form-control" ng-model="left"
+												ng-required="true" placeholder="Erster Summand"
+												aria-describedby="sum1"> </span> <span
+												class="input-group-addon" id="sum2">Summand</span> <input
+												type="number" class="form-control" ng-model="right"
+												ng-required="true" placeholder="Zweiter Summand"
+												aria-describedby="sum2"> </span>
+										</div>
+
+										<button class="btn btn-primary" type="submit">Berechnen
+											...</button>
+
+										<button class="btn btn-default" type="button" ng-click="onSelectShoppingCartList()">Zurück</button>
+									</form>
+									</p>
+
+								</div>
+
+								<!-- List of versions -->
+								<table class="table">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Title</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="version in versions">
+											<th scope="row">{{$index}}</th>
+											<td><a href="#" ng-click="onSelectVersion(version.id)">{{version.title}}</a></td>
+											<td><button type="button" class="btn btn-default"
+													ng-click="onDeleteVersion(version.id)"
+													aria-label="Left Align">
+													<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+												</button></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<!--  shows a list of carts -->
+							<div class="panel panel-default" ng-hide="cartId">
+								<!-- Default panel contents -->
+								<div class="panel-heading">Projektverwaltung</div>
+								<div class="panel-body">
+									<p>
+									<form ng-submit="onCreateShoppingCart()">
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon1">Name</span>
+											<input type="text" class="form-control"
+												ng-model="shoppingCartTitle" ng-required="true"
+												ng-minlength="3" placeholder="Name des Projekts"
+												aria-describedby="basic-addon1"> <span
+												class="input-group-btn">
+												<button class="btn btn-default" type="submit">Neu
+													...</button>
+											</span>
+										</div>
+									</form>
+									</p>
+
+								</div>
+
+								<!-- List of carts -->
+								<table class="table">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Title</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="cart in shoppingCarts">
+											<th scope="row">{{$index}}</th>
+											<td><a href="#" ng-click="onSelectShoppingCart(cart.id)">{{cart.title}}</a></td>
+											<td><button type="button" class="btn btn-default"
+													ng-click="onDeleteShoppingCart(cart.id)"
+													aria-label="Left Align">
+													<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+												</button></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 							</p>
+
 							<ul class="list-inline item-details">
 								<li>Client: <strong><a
 										href="http://startbootstrap.com">Start Bootstrap</a> </strong>
@@ -594,7 +687,8 @@
 
 	<!-- include Angular JS -->
 	<script
-		src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+		src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+	<script src="js/InekonController.js"></script>
 
 </body>
 

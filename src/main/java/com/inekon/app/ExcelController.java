@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,6 +43,29 @@ public class ExcelController {
 	 */
 	private final ShoppingCartListBean getShoppingCartListBean() {
 		return new ShoppingCartListBean(TEMPLATE_FILE);
+	}
+
+	/**
+	 * Constructs a new cart
+	 * 
+	 * @param aTitle
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = { "/createShoppingCart" }, method = { RequestMethod.PUT })
+	public ShoppingCartRefBean createShoppingCart(@RequestBody String aTitle) throws IOException {
+		// the list
+		final ShoppingCartListBean list = getShoppingCartListBean();
+		final ShoppingCartBean bean = list.createNewShoppingCart();
+		bean.setTitle(aTitle);
+		bean.saveProperties();
+		// returns the new cart
+		return new ShoppingCartRefBean(bean);
+	}
+
+	@RequestMapping("/shoppingCarts")
+	public ShoppingCartListResultBean getShoppingCarts() {
+		return new ShoppingCartListResultBean(getShoppingCartListBean());
 	}
 
 	@RequestMapping("/calc")
