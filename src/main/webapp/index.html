@@ -24,6 +24,9 @@
 <link
 	href="//fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic"
 	rel="stylesheet" type="text/css">
+<link
+	href="//cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist.min.css"
+	rel="stylesheet" type="text/css">
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -330,7 +333,10 @@
 							<div class="panel panel-default" ng-show="versionId">
 								<!-- Default panel contents -->
 								<div class="panel-heading">Resultat</div>
-								Resultat
+
+								<!-- the chart -->
+								<div id="resultChart" width="100%" height="250px"></div>
+
 								<div class="panel-body">
 									<button class="btn btn-default" type="button"
 										ng-click="onSelectShoppingCart(cartId)">Zurück</button>
@@ -380,7 +386,7 @@
 											<th scope="row">{{$index}}</th>
 											<td><a href="#" ng-click="onSelectVersion(version.id)">{{version.title}}</a></td>
 											<td><button type="button" class="btn btn-default"
-													ng-click="onDeleteVersion(version.id)"
+													ng-click="onDeleteVersion(version.cartId, version.id)"
 													aria-label="Left Align">
 													<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 												</button></td>
@@ -701,9 +707,8 @@
 	<!-- include Angular JS -->
 	<script
 		src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+	<script type="text/javascript" src="//www.gstatic.com/charts/loader.js"></script>
 	<script src="js/InekonController.js"></script>
-
-	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
 </body>
 

@@ -2,7 +2,6 @@ package com.inekon.app;
 
 import static com.inekon.app.CalculationBean.KEY_LEFT;
 import static com.inekon.app.CalculationBean.KEY_RIGHT;
-import static com.inekon.app.CalculationBean.KEY_TARGET;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -130,5 +130,18 @@ public class ExcelController {
 	@RequestMapping("/shoppingCarts")
 	public ShoppingCartListResultBean getShoppingCarts() {
 		return new ShoppingCartListResultBean(getShoppingCartListBean());
+	}
+
+	@RequestMapping("/versions/{id}")
+	public VersionListResultBean getVersions(@PathVariable("id") String aCartId) {
+		// returns the list
+		return new VersionListResultBean(getShoppingCartListBean().getShoppingCartBean(aCartId));
+	}
+
+	@RequestMapping("/version/{cartId}/{versionId}")
+	public VersionResultBean getVersion(@PathVariable("cartId") String aCartId,
+			@PathVariable("versionId") String aVersionId) {
+		// extracts the computation result
+		return new VersionResultBean(getShoppingCartListBean().getShoppingCartBean(aCartId).getVersionBean(aVersionId));
 	}
 }
